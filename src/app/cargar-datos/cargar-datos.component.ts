@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,11 +11,11 @@ import { lastValueFrom } from 'rxjs';
   templateUrl: './cargar-datos.component.html',
   styleUrl: './cargar-datos.component.css',
 })
-export class CargarDatosComponent {
+export class CargarDatosComponent implements OnInit {
   @ViewChild('formularioInsertar') formularioInsertar!: ElementRef;
   @ViewChild('formularioEditar') formularioEditar!: ElementRef;
 
-  url: string = '';
+  url: string = 'https://apipostgress2-1.onrender.com/api/platoes';
   platos: Plato[] = [];
   platosFiltrados: Plato[] = [];
   datosCargados: boolean = false;
@@ -36,12 +36,11 @@ export class CargarDatosComponent {
 
   constructor(private http: HttpClient) {}
 
-  async cargarDatos() {
-    if (!this.url) {
-      alert('Por favor, introduce una URL válida.');
-      return;
-    }
+  async ngOnInit() {
+    await this.cargarDatos();
+  }
 
+  async cargarDatos() {
     try {
       const response = await this.http.get<Plato[]>(this.url).toPromise();
       this.platos = response || [];
